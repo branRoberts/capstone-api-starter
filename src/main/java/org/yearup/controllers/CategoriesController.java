@@ -30,11 +30,15 @@ public class CategoriesController
     {
         return categoryService.getAllCategories();
     }
-    // find a single category by its id
+    // find a single category by its id, return 404 if not found
     @GetMapping("{id}")
-    public Category getById(@PathVariable int id)
+    public ResponseEntity<Category> getById(@PathVariable int id)
     {
-        return categoryService.getById(id);
+        Category category = categoryService.getById(id);
+        if (category == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(category);
     }
 
     @GetMapping("{categoryId}/products")
