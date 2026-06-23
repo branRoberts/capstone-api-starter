@@ -56,6 +56,8 @@ public class ProductService
         existing.setSubCategory(product.getSubCategory());
         existing.setFeatured(product.isFeatured());
         existing.setImageUrl(product.getImageUrl());
+        existing.setStock(product.getStock());
+        // added missing stock update - stock changes were not being saved
         return productRepository.save(existing);
     }
 
