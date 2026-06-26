@@ -6,46 +6,50 @@ import org.yearup.repository.CategoryRepository;
 
 import java.util.List;
 
+// handles the business logic for category operations
+// sits between the controller and the repository
 @Service
 public class CategoryService
 {
     private final CategoryRepository categoryRepository;
 
+    // Spring injects the repository through the constructor
     public CategoryService(CategoryRepository categoryRepository)
     {
         this.categoryRepository = categoryRepository;
     }
 
+    // gets every category from the database and returns them as a list
     public List<Category> getAllCategories()
     {
-        // get all categories from the database
         return categoryRepository.findAll();
     }
 
+    // looks up one category by its id
+    // returns null if no category with that id exists
     public Category getById(int categoryId)
     {
-        // find a single category by its id
         return categoryRepository.findById(categoryId).orElse(null);
     }
 
+    // saves a new category to the database and returns the saved version
     public Category create(Category category)
     {
-        // save the new category and return it
         return categoryRepository.save(category);
     }
 
+    // finds the existing category, updates its name and description, then saves it
     public Category update(int categoryId, Category category)
     {
-        // find the existing category, update its fields, save and return it
         Category existing = categoryRepository.findById(categoryId).orElseThrow();
         existing.setName(category.getName());
         existing.setDescription(category.getDescription());
         return categoryRepository.save(existing);
     }
 
+    // removes a category from the database by its id
     public void delete(int categoryId)
     {
-        // remove the category from the database by id
         categoryRepository.deleteById(categoryId);
     }
 }

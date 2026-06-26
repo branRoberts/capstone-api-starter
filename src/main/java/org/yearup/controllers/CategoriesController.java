@@ -11,6 +11,7 @@ import org.yearup.service.ProductService;
 
 import java.util.List;
 
+// handles all requests coming in to /categories
 @RestController
 @RequestMapping("categories")
 @CrossOrigin
@@ -19,18 +20,21 @@ public class CategoriesController
     private CategoryService categoryService;
     private ProductService productService;
 
+    // Spring injects the service dependencies through the constructor
     public CategoriesController(CategoryService categoryService, ProductService productService)
     {
         this.categoryService = categoryService;
         this.productService = productService;
     }
-    // return all categories from the database
+
+    // returns all categories - available to anyone
     @GetMapping
     public List<Category> getAll()
     {
         return categoryService.getAllCategories();
     }
-    // find a single category by its id, return 404 if not found
+
+    // returns a single category by id - returns 404 if the id doesn't exist
     @GetMapping("{id}")
     public ResponseEntity<Category> getById(@PathVariable int id)
     {
@@ -41,12 +45,14 @@ public class CategoriesController
         return ResponseEntity.ok(category);
     }
 
+    // returns all products that belong to a specific category
     @GetMapping("{categoryId}/products")
     public List<Product> getProductsById(@PathVariable int categoryId)
     {
         return productService.listByCategoryId(categoryId);
     }
-    // save a new category to the database and return it
+
+    // adds a new category - only admins are allowed to do this
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Category> addCategory(@RequestBody Category category)
@@ -54,14 +60,17 @@ public class CategoriesController
         Category created = categoryService.create(category);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
-    // find the existing category, update its fields, and save it
+
+    // updates an existing category by id - only admins are allowed to do this
     @PutMapping("{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Category updateCategory(@PathVariable int id, @RequestBody Category category)
     {
         return categoryService.update(id, category);
     }
-    // remove the category from the database by id
+
+    // deletes a category by id - only admins are allowed to do this
+    // returns 204 No Content on success
     @DeleteMapping("{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteCategory(@PathVariable int id)
